@@ -1,7 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:mirror_wall/screen/home_screen/provider/home_provider.dart';
+import 'package:mirror_wall/widget/show_bottom_sheet.dart';
 import 'package:mirror_wall/widget/show_dialog.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,11 +11,17 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
- InAppWebViewController? inAppWebViewController;
-TextEditingController txtSearch=TextEditingController();
+
+HomeProvider? providerR;
+HomeProvider? providerW;
+InAppWebViewController? inAppWebViewController;
+TextEditingController txtSearch = TextEditingController();
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    providerR = context.read<HomeProvider>();
+    providerW = context.watch<HomeProvider>();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -23,22 +31,24 @@ class _HomeScreenState extends State<HomeScreen> {
             PopupMenuButton(
               itemBuilder: (context) {
                 return [
-                  const PopupMenuItem(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.bookmark_add),
-                        Text("All Bookmark")
-                      ],
+                  PopupMenuItem(
+                    child: InkWell(
+                      onTap: () {
+                        ShowBottomSheet(context);
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(Icons.bookmark_add),
+                          Text("All Bookmark")
+                        ],
+                      ),
                     ),
                   ),
                   PopupMenuItem(
                     child: InkWell(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => ShowDialog(),
-                        );
+                        ShowDialog(context);
                       },
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -56,10 +66,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Stack(children: [
           InAppWebView(
-            onLoadStart: (controller, url) => inAppWebViewController=controller,
-            onLoadStop: (controller, url) => inAppWebViewController=controller,
-            onLoadError: (controller, url, code, message) => inAppWebViewController=controller,
-            onProgressChanged: (controller, progress) => inAppWebViewController=controller,
+            onLoadStart: (controller, url) =>
+                inAppWebViewController = controller,
+            onLoadStop: (controller, url) =>
+                inAppWebViewController = controller,
+            onLoadError: (controller, url, code, message) =>
+                inAppWebViewController = controller,
+            onProgressChanged: (controller, progress) =>
+                inAppWebViewController = controller,
             initialUrlRequest: URLRequest(
               url: Uri.parse("https://www.google.com/"),
             ),
@@ -71,40 +85,52 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.grey.shade100,
               child: Column(
                 children: [
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextField(
                       controller: txtSearch,
-                      decoration:  InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Search or type web address"),
-                          suffixIcon: IconButton(onPressed: () {
-                            inAppWebViewController?.loadUrl(urlRequest: URLRequest(url: Uri.parse("https://www.google.com/search?q=${txtSearch.text}")));
-                          }, icon: Icon(Icons.search),)),
+                      decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          label: const Text("Search or type web address"),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              inAppWebViewController?.loadUrl(
+                                  urlRequest: URLRequest(
+                                      url: Uri.parse(
+                                          "https://www.google.com/search?q=${txtSearch.text}")));
+                            },
+                            icon: const Icon(Icons.search),
+                          )),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(onPressed: () {
-                        inAppWebViewController?.loadUrl(urlRequest: URLRequest(url: Uri.parse("https://www.google.com/")));
-                      }, icon: const Icon(Icons.home)),
                       IconButton(
                           onPressed: () {
+                            inAppWebViewController?.loadUrl(
+                                urlRequest: URLRequest(
+                                    url: Uri.parse("https://www.google.com/")));
                           },
+                          icon: const Icon(Icons.home)),
+                      IconButton(
+                          onPressed: () {},
                           icon: const Icon(Icons.bookmark_add_outlined)),
                       IconButton(
                           onPressed: () {
                             inAppWebViewController?.goBack();
-                          }, icon: const Icon(Icons.arrow_back)),
+                          },
+                          icon: const Icon(Icons.arrow_back)),
                       IconButton(
                           onPressed: () {
                             inAppWebViewController?.reload();
-                          }, icon: const Icon(Icons.restart_alt)),
+                          },
+                          icon: const Icon(Icons.restart_alt)),
                       IconButton(
                           onPressed: () {
                             inAppWebViewController?.goForward();
-                          }, icon: const Icon(Icons.arrow_forward)),
+                          },
+                          icon: const Icon(Icons.arrow_forward)),
                     ],
                   ),
                 ],
