@@ -90,17 +90,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TextField(
                       controller: txtSearch,
                       decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          label: const Text("Search or type web address"),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              inAppWebViewController?.loadUrl(
-                                  urlRequest: URLRequest(
-                                      url: Uri.parse(
-                                          "https://www.google.com/search?q=${txtSearch.text}")));
-                            },
-                            icon: const Icon(Icons.search),
-                          )),
+                        border: const OutlineInputBorder(),
+                        label: const Text("Search or type web address"),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            inAppWebViewController?.loadUrl(
+                                urlRequest: URLRequest(
+                                    url: Uri.parse(
+                                        "https://www.google.com/search?q=${txtSearch.text}")));
+                          },
+                          icon: const Icon(Icons.search),
+                        ),
+                      ),
                     ),
                   ),
                   Row(
