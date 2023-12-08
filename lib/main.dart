@@ -10,6 +10,7 @@ void main() {
             ChangeNotifierProvider(create: (context) => HomeProvider(),)
       ],
       child: MaterialApp(
+        title: "Mirror",
         theme: ThemeData(useMaterial3: true),
         debugShowCheckedModeBanner: false,
         routes: app_routes,
