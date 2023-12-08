@@ -14,18 +14,21 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => HomeScreenState();
 }
-
 class HomeScreenState extends State<HomeScreen> {
  @override
  void initState() {
    super.initState();
    networkConnection.checkConnection(context);
+   pullToRefreshController=PullToRefreshController(onRefresh: () async {
+     await inAppWebViewController?.reload();
+   },options: PullToRefreshOptions(color: Colors.red));
  }
  NetworkConnection networkConnection = NetworkConnection();
  HomeProvider? providerR;
   HomeProvider? providerW;
   static InAppWebViewController? inAppWebViewController;
   TextEditingController txtSearch = TextEditingController();
+  PullToRefreshController? pullToRefreshController;
   @override
   Widget build(BuildContext context) {
     providerR = context.read<HomeProvider>();
@@ -74,6 +77,7 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         body: Stack(children: [
           InAppWebView(
+            pullToRefreshController: pullToRefreshController,
             onLoadStart: (controller, url) =>
                 inAppWebViewController = controller,
             onLoadStop: (controller, url) =>
@@ -83,6 +87,10 @@ class HomeScreenState extends State<HomeScreen> {
             onProgressChanged: (controller, progress) {
               inAppWebViewController = controller;
               providerW!.progressBar(progress);
+              if(progress==100)
+                {
+                  pullToRefreshController?.endRefreshing();
+                }
             },
             initialUrlRequest: URLRequest(
               url: Uri.parse("https://www.google.com/"),
@@ -115,7 +123,7 @@ class HomeScreenState extends State<HomeScreen> {
                               )),
                         ),
                         LinearProgressIndicator(
-                          color: Colors.red,
+                          color: Colors.red.shade200,
                           value: providerR!.progressValue,
                         ),
                       ],
