@@ -24,6 +24,8 @@ class HomeProvider with ChangeNotifier
   //   },
   // ];
   bool isOnline = false;
+  double progressValue = 0.0;
+
 
   List<HomeModel> services =[
     HomeModel(link: "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar"),
@@ -45,6 +47,11 @@ class HomeProvider with ChangeNotifier
 
   void setMaritalStatus(String value) {
     maritalStatus = value;
+    notifyListeners();
+  }
+  void progressBar(progress)
+  {
+    progressValue=progress/100;
     notifyListeners();
   }
 }

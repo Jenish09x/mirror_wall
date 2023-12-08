@@ -1,9 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:mirror_wall/screen/home_screen/provider/home_provider.dart';
 import 'package:mirror_wall/widget/show_bottom_sheet.dart';
 import 'package:mirror_wall/widget/show_dialog.dart';
 import 'package:provider/provider.dart';
+
+import '../../../utils/check_data_status.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,10 +15,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
-
-
 class HomeScreenState extends State<HomeScreen> {
-  HomeProvider? providerR;
+ @override
+ void initState() {
+   super.initState();
+   networkConnection.checkConnection(context);
+ }
+ NetworkConnection networkConnection = NetworkConnection();
+ HomeProvider? providerR;
   HomeProvider? providerW;
   static InAppWebViewController? inAppWebViewController;
   TextEditingController txtSearch = TextEditingController();
@@ -24,7 +31,7 @@ class HomeScreenState extends State<HomeScreen> {
     providerR = context.read<HomeProvider>();
     providerW = context.watch<HomeProvider>();
     return SafeArea(
-      child: Scaffold(
+      child: providerW!.isOnline?Scaffold(
         appBar: AppBar(
           title: const Text('Browser'),
           centerTitle: true,
@@ -73,8 +80,10 @@ class HomeScreenState extends State<HomeScreen> {
                 inAppWebViewController = controller,
             onLoadError: (controller, url, code, message) =>
                 inAppWebViewController = controller,
-            onProgressChanged: (controller, progress) =>
-                inAppWebViewController = controller,
+            onProgressChanged: (controller, progress) {
+              inAppWebViewController = controller;
+              providerW!.progressBar(progress);
+            },
             initialUrlRequest: URLRequest(
               url: Uri.parse("https://www.google.com/"),
             ),
@@ -88,20 +97,28 @@ class HomeScreenState extends State<HomeScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      controller: txtSearch,
-                      decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          label: const Text("Search or type web address"),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              inAppWebViewController?.loadUrl(
-                                  urlRequest: URLRequest(
-                                      url: Uri.parse(
-                                          "https://www.google.com/search?q=${txtSearch.text}")));
-                            },
-                            icon: const Icon(Icons.search),
-                          )),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: txtSearch,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              label: const Text("Search or type web address"),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  inAppWebViewController?.loadUrl(
+                                      urlRequest: URLRequest(
+                                          url: Uri.parse(
+                                              "https://www.google.com/search?q=${txtSearch.text}")));
+                                },
+                                icon: const Icon(Icons.search),
+                              )),
+                        ),
+                        LinearProgressIndicator(
+                          color: Colors.red,
+                          value: providerR!.progressValue,
+                        ),
+                      ],
                     ),
                   ),
                   Row(
@@ -113,7 +130,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 urlRequest: URLRequest(
                                     url: Uri.parse("https://www.google.com/")));
                           },
-                          icon: const Icon(Icons.home)),
+                          icon: const Icon(Icons.home_outlined)),
                       IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.bookmark_add_outlined)),
@@ -139,7 +156,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ]),
-      ),
+      ):Center(child: const Text("No Internet"))
     );
   }
 }
