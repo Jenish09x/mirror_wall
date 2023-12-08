@@ -9,15 +9,16 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-HomeProvider? providerR;
-HomeProvider? providerW;
-InAppWebViewController? inAppWebViewController;
-TextEditingController txtSearch = TextEditingController();
 
-class _HomeScreenState extends State<HomeScreen> {
+
+class HomeScreenState extends State<HomeScreen> {
+  HomeProvider? providerR;
+  HomeProvider? providerW;
+  static InAppWebViewController? inAppWebViewController;
+  TextEditingController txtSearch = TextEditingController();
   @override
   Widget build(BuildContext context) {
     providerR = context.read<HomeProvider>();

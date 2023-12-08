@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:mirror_wall/screen/home_screen/provider/home_provider.dart';
 import 'package:mirror_wall/screen/home_screen/view/home_screen.dart';
+import 'package:mirror_wall/screen/home_screen/view/home_screen.dart';
 import 'package:provider/provider.dart';
+
+import '../screen/home_screen/view/home_screen.dart';
+import '../screen/home_screen/view/home_screen.dart';
+import '../screen/home_screen/view/home_screen.dart';
+import '../screen/home_screen/view/home_screen.dart';
+import '../screen/home_screen/view/home_screen.dart';
 
 // ignore: non_constant_identifier_names
 void ShowDialog(BuildContext context,)
