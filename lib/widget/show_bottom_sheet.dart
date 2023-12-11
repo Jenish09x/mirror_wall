@@ -19,8 +19,9 @@ void ShowBottomSheet(BuildContext context) {
               return ListTile(
                 onLongPress: () {
                   context.watch<HomeProvider>().bookMarkData?.removeAt(index);
+                  Navigator.pop(context);
                 },
-                title: Text("https://www.google.com/search?q ${context.read<HomeProvider>().bookMarkData?[index]}"),
+                title: Text("https://www.google.com/search?q ${context.read<HomeProvider>().bookMarkData!}"),
               );
             },
             itemCount: context.read<HomeProvider>().bookMarkData!.length,
